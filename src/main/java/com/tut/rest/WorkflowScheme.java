@@ -2,6 +2,7 @@ package com.tut.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.scheme.Scheme;
+import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
@@ -19,19 +20,19 @@ public class WorkflowScheme {
     @Path("/")
     public Response gcNotDefault() {
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
-        List<Scheme> temp = schemeManager.getAssociatedSchemes(false);
-        temp.forEach(scheme -> {
-            System.out.println(String.format("Gonna delete '%s' scheme", scheme.getName()));
+
+        List<Scheme> schemeObjects = schemeManager.getSchemeObjects();
+
+        schemeObjects.forEach(scheme -> {
+            try {
+                AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(scheme.getId());
+                if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
+                    System.out.println(String.format("Gonna delete '%s' scheme", scheme.getName()));
+                }
+            } catch (Exception c) {
+                // noop
+            }
         });
-
-
-        List<Scheme> temp2 = schemeManager.getAssociatedSchemes(false);
-        temp2.forEach(scheme -> {
-            System.out.println(String.format("Gonna delete '%s' scheme", scheme.getName()));
-        });
-
-
-
 
         return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
     }
@@ -40,8 +41,13 @@ public class WorkflowScheme {
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
-    public Response gcForKey(@PathParam("id") String id) {
+    public Response gcForKey(@PathParam("id") int id) {
+        WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
 
+        AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(id);
+        if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
+            System.out.println(String.format("Gonna delete '%s' scheme", wf.getName()));
+        }
 
         //TODO: add exception catch for not found
         //System.out.println(String.format("Gonna delete '%s' workflow with id '%d'", workflow.getName()));
