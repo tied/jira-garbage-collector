@@ -26,13 +26,12 @@ public class WorkflowResource {
             if(!jiraWorkflow.isSystemWorkflow() && !jiraWorkflow.isDefault()) {
                 Collection<org.ofbiz.core.entity.GenericValue> schemes = schemeManager.getSchemesForWorkflow(jiraWorkflow);
                 if(schemes.size() == 0) {
-                    System.out.println(String.format("Gonna delete '%s' workflow", jiraWorkflow.getName()));
                     workflowManager.deleteWorkflow(jiraWorkflow);
                 }
             }
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("id", "testMsg")).build();
     }
 
     @DELETE

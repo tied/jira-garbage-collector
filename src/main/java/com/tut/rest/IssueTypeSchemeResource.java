@@ -28,9 +28,8 @@ public class IssueTypeSchemeResource {
             }
 
             if(screen.getAssociatedProjectIds().size() == 0) {
-                System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
                 // no associated projects, lets remove it
-                // schemeManager.deleteScheme(screen);
+                schemeManager.deleteScheme(screen);
             }
         });
 
@@ -48,7 +47,6 @@ public class IssueTypeSchemeResource {
         schemeManager.getAllSchemes().forEach(screen -> {
             if(screen.getId() == id) {
                 if(screen.getAssociatedProjectIds().size() == 0) {
-                    System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
                     removedScreen.set(screen);
                     schemeManager.deleteScheme(screen);
                 }

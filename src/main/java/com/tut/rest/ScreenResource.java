@@ -53,12 +53,10 @@ public class ScreenResource {
         allScreensIds.removeAll(screenIdsWithScheme);
         allScreensIds.removeAll(screenIdsWithWorkflowAction);
         allScreensIds.forEach(screen -> {
-            FieldScreen sc = fieldScreenManager.getFieldScreen(screen);
-            System.out.println(String.format("Gonna delete '%s' with id '%d'", sc.getName(), sc.getId()));
-            // fieldScreenManager.removeFieldScreen(screen);
+            fieldScreenManager.removeFieldScreen(screen);
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("id", "testMsg")).build();
     }
 
     @DELETE
@@ -69,9 +67,11 @@ public class ScreenResource {
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
         FieldScreen screen = fieldScreenManager.getFieldScreen(id);
 
-        System.out.println(String.format("Gonna delete '%s' with id '%d'", screen.getName(), screen.getId()));
-        // fieldScreenManager.removeFieldScreen(screen.getId());
+        if(screen == null) {
+            return Response.status(404).build();
+        }
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        fieldScreenManager.removeFieldScreen(screen.getId());
+        return Response.ok(new DeleteModel("Screen", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName()))).build();
     }
 }

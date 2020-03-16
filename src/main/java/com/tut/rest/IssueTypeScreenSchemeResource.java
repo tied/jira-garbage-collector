@@ -27,11 +27,10 @@ public class IssueTypeScreenSchemeResource {
             }
 
             if(screen.getProjects().size() == 0) {
-                System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
                 // no associated projects, lets remove it
-                // schemeManager.removeIssueTypeSchemeEntities(screen);
-                // schemeManager.removeIssueTypeScreenScheme(screen);
-                // screen.remove();
+                schemeManager.removeIssueTypeSchemeEntities(screen);
+                schemeManager.removeIssueTypeScreenScheme(screen);
+                screen.remove();
             }
         });
 

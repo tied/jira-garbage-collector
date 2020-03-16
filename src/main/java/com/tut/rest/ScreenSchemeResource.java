@@ -1,6 +1,7 @@
 package com.tut.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.fields.screen.FieldScreenScheme;
 import com.atlassian.jira.issue.fields.screen.FieldScreenSchemeManager;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
@@ -36,18 +37,17 @@ public class ScreenSchemeResource {
                 });
 
                 if(itssCollection.size() == 0 || allDeleted.get()) {
-                    System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", fss.getName(), fss.getId()));
                     // remove association to any screens
-                    //fssm.removeFieldSchemeItems(fss);
+                    fssm.removeFieldSchemeItems(fss);
                     // remove field screen scheme
-                    //fssm.removeFieldScreenScheme(fss);
+                    fssm.removeFieldScreenScheme(fss);
                 }
             } catch(Exception e) {
                 //noop
             }
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("id", "testMsg")).build();
     }
 
     @DELETE
@@ -55,13 +55,15 @@ public class ScreenSchemeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {
-        IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
-        IssueTypeScreenScheme screen = schemeManager.getIssueTypeScreenScheme(id);
-        //screen.remove();
+        FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
+        FieldScreenScheme screen = fssm.getFieldScreenScheme(id);
 
-        //TODO: add exception catch for not found
-        System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
+        if(screen == null) {
+            return Response.status(404).build();
+        }
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        fssm.removeFieldSchemeItems(screen);
+        fssm.removeFieldScreenScheme(screen);
+        return Response.ok(new DeleteModel("ScreenScheme", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName()))).build();
     }
 }

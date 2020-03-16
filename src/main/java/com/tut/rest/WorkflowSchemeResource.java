@@ -27,16 +27,14 @@ public class WorkflowSchemeResource {
             try {
                 AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(scheme.getId());
                 if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
-                    System.out.println(String.format("Gonna delete '%s' scheme", wf.getName()));
                     schemeManager.deleteWorkflowScheme(wf);
                 }
             } catch (Exception c) {
                 // noop
-                
             }
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("id", "testMsg")).build();
     }
 
     @DELETE
