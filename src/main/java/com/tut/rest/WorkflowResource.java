@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.Collection;
 
 @Path("/workflow")
-public class Workflow {
+public class WorkflowResource {
 
     @DELETE
     @AnonymousAllowed
@@ -27,7 +27,7 @@ public class Workflow {
                 Collection<org.ofbiz.core.entity.GenericValue> schemes = schemeManager.getSchemesForWorkflow(jiraWorkflow);
                 if(schemes.size() == 0) {
                     System.out.println(String.format("Gonna delete '%s' workflow", jiraWorkflow.getName()));
-                    //workflowManager.deleteWorkflow(jiraWorkflow);
+                    workflowManager.deleteWorkflow(jiraWorkflow);
                 }
             }
         });
@@ -42,11 +42,11 @@ public class Workflow {
     public Response gcForKey(@PathParam("name") String name) {
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         JiraWorkflow workflow = workflowManager.getWorkflow(name);
-        //workflowManager.deleteWorkflow(workflow);
+        if(workflow == null) {
+            return Response.status(404).build();
+        }
+        workflowManager.deleteWorkflow(workflow);
 
-        //TODO: add exception catch for not found
-        System.out.println(String.format("Gonna delete '%s' workflow", workflow.getName()));
-
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("Workflow", String.format("Name: '%s' deleted", workflow.getName()))).build();
     }
 }

@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/workflowscheme")
-public class WorkflowScheme {
+public class WorkflowSchemeResource {
 
     @DELETE
     @AnonymousAllowed
@@ -27,7 +27,8 @@ public class WorkflowScheme {
             try {
                 AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(scheme.getId());
                 if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
-                    System.out.println(String.format("Gonna delete '%s' scheme", scheme.getName()));
+                    System.out.println(String.format("Gonna delete '%s' scheme", wf.getName()));
+                    schemeManager.deleteWorkflowScheme(wf);
                 }
             } catch (Exception c) {
                 // noop
@@ -43,15 +44,13 @@ public class WorkflowScheme {
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") int id) {
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
+        AssignableWorkflowScheme workflowScheme = schemeManager.getWorkflowSchemeObj(id);
 
-        AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(id);
-        if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
-            System.out.println(String.format("Gonna delete '%s' scheme", wf.getName()));
+        if(workflowScheme == null) {
+            return Response.status(404).build();
         }
 
-        //TODO: add exception catch for not found
-        //System.out.println(String.format("Gonna delete '%s' workflow with id '%d'", workflow.getName()));
-
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        schemeManager.deleteWorkflowScheme(workflowScheme);
+        return Response.ok(new DeleteModel("WorkflowScheme", String.format("ID: '%d', Name: '%s' deleted", workflowScheme.getId(), workflowScheme.getName()))).build();
     }
 }

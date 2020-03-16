@@ -8,6 +8,7 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Path("/issuetypescheme")
 public class IssueTypeSchemeResource {
@@ -33,7 +34,7 @@ public class IssueTypeSchemeResource {
             }
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("id", "testMsg")).build();
     }
 
     @DELETE
@@ -43,17 +44,21 @@ public class IssueTypeSchemeResource {
     public Response gcForKey(@PathParam("id") long id) {
         IssueTypeSchemeManager schemeManager = ComponentAccessor.getIssueTypeSchemeManager();
 
-        //TODO: add exception catch for not found
+        AtomicReference<FieldConfigScheme> removedScreen = new AtomicReference<>();
         schemeManager.getAllSchemes().forEach(screen -> {
             if(screen.getId() == id) {
                 if(screen.getAssociatedProjectIds().size() == 0) {
                     System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
-                    // no associated projects, lets remove it
-                    // schemeManager.deleteScheme(screen);
+                    removedScreen.set(screen);
+                    schemeManager.deleteScheme(screen);
                 }
             }
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        if(removedScreen.get() == null) {
+            return Response.status(404).build();
+        }
+
+        return Response.ok(new DeleteModel("IssueTypeScheme", String.format("ID: '%d', Name: '%s' deleted", removedScreen.get().getId(), removedScreen.get().getName()))).build();
     }
 }

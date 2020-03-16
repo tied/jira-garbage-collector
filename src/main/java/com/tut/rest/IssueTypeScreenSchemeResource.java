@@ -29,12 +29,13 @@ public class IssueTypeScreenSchemeResource {
             if(screen.getProjects().size() == 0) {
                 System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
                 // no associated projects, lets remove it
-                //schemeManager.removeIssueTypeSchemeEntities(screen);
-                //schemeManager.removeIssueTypeScreenScheme(screen);
+                // schemeManager.removeIssueTypeSchemeEntities(screen);
+                // schemeManager.removeIssueTypeScreenScheme(screen);
+                // screen.remove();
             }
         });
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        return Response.ok(new DeleteModel("id", "testMsg")).build();
     }
 
     @DELETE
@@ -44,10 +45,13 @@ public class IssueTypeScreenSchemeResource {
     public Response gcForKey(@PathParam("id") long id) {
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme screen = schemeManager.getIssueTypeScreenScheme(id);
-        //screen.remove();
-        //TODO: add exception catch for not found
-        System.out.println(String.format("Gonna delete '%s' scheme with id '%d'", screen.getName(), screen.getId()));
 
-        return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
+        if(screen == null) {
+            return Response.status(404).build();
+        }
+        schemeManager.removeIssueTypeSchemeEntities(screen);
+        schemeManager.removeIssueTypeScreenScheme(screen);
+        screen.remove();
+        return Response.ok(new DeleteModel("IssueTypeScreenScheme", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName()))).build();
     }
 }
