@@ -4,6 +4,8 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.tut.rest.utils.Auth;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,12 +13,21 @@ import javax.ws.rs.core.Response;
 
 @Path("/issuetypescreenscheme")
 public class IssueTypeScreenSchemeResource {
+    private Auth auth;
+
+    @Autowired
+    public IssueTypeScreenSchemeResource(Auth auth) {
+        this.auth = auth;
+    }
 
     @DELETE
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme defaultScheme = schemeManager.getDefaultScheme();
 
@@ -42,6 +53,9 @@ public class IssueTypeScreenSchemeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme screen = schemeManager.getIssueTypeScreenScheme(id);
 

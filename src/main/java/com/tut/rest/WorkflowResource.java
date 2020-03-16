@@ -5,6 +5,8 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.tut.rest.utils.Auth;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,12 +15,21 @@ import java.util.Collection;
 
 @Path("/workflow")
 public class WorkflowResource {
+    private Auth auth;
+
+    @Autowired
+    public WorkflowResource(Auth auth) {
+        this.auth = auth;
+    }
 
     @DELETE
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
 
@@ -39,6 +50,9 @@ public class WorkflowResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{name}")
     public Response gcForKey(@PathParam("name") String name) {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         JiraWorkflow workflow = workflowManager.getWorkflow(name);
         if(workflow == null) {

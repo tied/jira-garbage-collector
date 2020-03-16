@@ -4,6 +4,8 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.tut.rest.utils.Auth;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,12 +14,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Path("/issuetypescheme")
 public class IssueTypeSchemeResource {
+    private Auth auth;
+
+    @Autowired
+    public IssueTypeSchemeResource(Auth auth) {
+        this.auth = auth;
+    }
 
     @DELETE
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         IssueTypeSchemeManager schemeManager = ComponentAccessor.getIssueTypeSchemeManager();
         FieldConfigScheme defaultScheme = schemeManager.getDefaultIssueTypeScheme();
 
@@ -41,6 +52,9 @@ public class IssueTypeSchemeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         IssueTypeSchemeManager schemeManager = ComponentAccessor.getIssueTypeSchemeManager();
 
         AtomicReference<FieldConfigScheme> removedScreen = new AtomicReference<>();

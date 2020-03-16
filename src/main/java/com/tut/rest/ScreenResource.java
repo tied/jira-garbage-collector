@@ -8,6 +8,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.WorkflowActionsBean;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.tut.rest.utils.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,27 +20,18 @@ import javax.ws.rs.core.Response;
 @Component
 @Path("/screen")
 public class ScreenResource {
-    private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final GlobalPermissionManager globalPermissionManager;
+    private Auth auth;
 
     @Autowired
-    public ScreenResource(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext, @ComponentImport GlobalPermissionManager globalPermissionManager) {
-        this.globalPermissionManager = globalPermissionManager;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-    }
-
-    private boolean canAccess() {
-        if (this.jiraAuthenticationContext.isLoggedInUser()) {
-            return this.globalPermissionManager.hasPermission(GlobalPermissionKey.ADMINISTER, this.jiraAuthenticationContext.getLoggedInUser());
-        }
-        return false;
+    public ScreenResource(Auth auth) {
+        this.auth = auth;
     }
 
     @DELETE
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
-        if (!this.canAccess()) {
+        if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
@@ -88,6 +80,9 @@ public class ScreenResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
         FieldScreen screen = fieldScreenManager.getFieldScreen(id);
 

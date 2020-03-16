@@ -6,6 +6,8 @@ import com.atlassian.jira.issue.fields.screen.FieldScreenSchemeManager;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.tut.rest.utils.Auth;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,12 +17,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Path("/screenscheme")
 public class ScreenSchemeResource {
+    private Auth auth;
+
+    @Autowired
+    public ScreenSchemeResource(Auth auth) {
+        this.auth = auth;
+    }
 
     @DELETE
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
         IssueTypeScreenSchemeManager itssm = ComponentAccessor.getIssueTypeScreenSchemeManager();
 
@@ -55,6 +66,9 @@ public class ScreenSchemeResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {
+        if (!auth.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
         FieldScreenScheme screen = fssm.getFieldScreenScheme(id);
 
