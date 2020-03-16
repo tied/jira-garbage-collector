@@ -32,6 +32,7 @@ public class WorkflowSchemeResource {
                 }
             } catch (Exception c) {
                 // noop
+                
             }
         });
 
