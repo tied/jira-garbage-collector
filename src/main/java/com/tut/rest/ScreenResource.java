@@ -2,14 +2,13 @@ package com.tut.rest;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.screen.*;
-import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
-import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
+import com.atlassian.jira.workflow.WorkflowActionsBean;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
 
 @Path("/screen")
 public class ScreenResource {
@@ -20,40 +19,44 @@ public class ScreenResource {
     @Path("/")
     public Response gcNotDefault() {
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
-        //FieldScreenFactory fieldScreenFactory = ComponentAccessor.getComponent(FieldScreenFactory.class);
-
         FieldScreenSchemeManager fieldScreenSchemeManager = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
 
-        //WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+        ArrayList<Long> allScreensIds = new ArrayList<>();
+        fieldScreenManager.getFieldScreens().forEach(screen -> allScreensIds.add(screen.getId()));
+        Iterable<FieldScreenScheme> screenSchemes = fieldScreenSchemeManager.getFieldScreenSchemes();
 
-        //ViewFieldScreens viewFieldScreens = new ViewFieldScreens(fieldScreenManager, fieldScreenFactory, fieldScreenSchemeManager, workflowManager)
+        ArrayList<Long> screenIdsWithScheme = new ArrayList<>();
 
-        fieldScreenManager.getFieldScreens().forEach(fieldScreen -> {
-            AtomicBoolean allEmptyOrNull = new AtomicBoolean(true);
-            fieldScreenSchemeManager.getFieldScreenSchemes(fieldScreen).forEach(fieldScreenScheme -> {
-                if(fieldScreenScheme != null) {
-                    allEmptyOrNull.set(false);
-                }
+        screenSchemes.forEach(fieldScreenScheme -> {
+            ArrayList<Long> items = new ArrayList<>();
+
+            fieldScreenSchemeManager.getFieldScreenSchemeItems(fieldScreenScheme).forEach(fieldScreenSchemeItem -> {
+                items.add(fieldScreenSchemeItem.getFieldScreen().getId());
             });
-
-            if(!allEmptyOrNull.get()) {
-                return;
-            }
-
-            // TODO: check workflows
-//            viewFieldScreens.getWorkflows(fieldScreen).each { workflow ->
-//                if(workflow != null) {
-//                    allEmptyOrNull = false;
-//                    return;
-//                }
-//            }
-
-            if(allEmptyOrNull.get()) {
-                //fieldScreenManager.removeFieldScreen(fieldScreen.getId());
-            }
-            System.out.println(String.format("Gonna delete '%s' with id '%d'", fieldScreen.getName(), fieldScreen.getId()));
+            screenIdsWithScheme.addAll(items);
         });
 
+        WorkflowActionsBean workflowBean = new WorkflowActionsBean();
+        ArrayList<Long> screenIdsWithWorkflowAction = new ArrayList<>();
+
+        ComponentAccessor.getWorkflowManager().getWorkflows().forEach(jiraWorkflow -> {
+            ArrayList<Long> items = new ArrayList<>();
+            jiraWorkflow.getAllActions().forEach(actionDescriptor -> {
+                try {
+                    items.add(workflowBean.getFieldScreenForView(actionDescriptor).getId());
+                } catch (Exception e) {}
+            });
+
+            screenIdsWithWorkflowAction.addAll(items);
+        });
+
+        allScreensIds.removeAll(screenIdsWithScheme);
+        allScreensIds.removeAll(screenIdsWithWorkflowAction);
+        allScreensIds.forEach(screen -> {
+            FieldScreen sc = fieldScreenManager.getFieldScreen(screen);
+            System.out.println(String.format("Gonna delete '%s' with id '%d'", sc.getName(), sc.getId()));
+            // fieldScreenManager.removeFieldScreen(screen);
+        });
 
         return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
     }
@@ -63,11 +66,11 @@ public class ScreenResource {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {
-        IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
-        IssueTypeScreenScheme screen = schemeManager.getIssueTypeScreenScheme(id);
-        //screen.remove();
+        FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
+        FieldScreen screen = fieldScreenManager.getFieldScreen(id);
 
         System.out.println(String.format("Gonna delete '%s' with id '%d'", screen.getName(), screen.getId()));
+        // fieldScreenManager.removeFieldScreen(screen.getId());
 
         return Response.ok(new IssueTypeScreenSchemeResourceModel("id", "testMsg")).build();
     }
