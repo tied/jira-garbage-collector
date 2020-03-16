@@ -38,7 +38,10 @@
   <rest key="workflow-scheme-resource" path="/workflowscheme" version="1.0">
     <description>The My Rest Resource Plugin</description>
   </rest>
-  <rest key="issuetypescheme" path="/issuetypescheme" version="1.0">
+  <rest key="issuetypescheme-resource" path="/issuetypescheme" version="1.0">
+    <description>The My Rest Resource Plugin</description>
+  </rest>
+  <rest key="filter-resource" path="/filter" version="1.0">
     <description>The My Rest Resource Plugin</description>
   </rest>
 </atlassian-plugin>
