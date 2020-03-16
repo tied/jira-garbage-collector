@@ -1,23 +1,47 @@
 package com.tut.rest;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.screen.*;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.permission.GlobalPermissionKey;
+import com.atlassian.jira.security.GlobalPermissionManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.WorkflowActionsBean;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
+import java.util.ArrayList;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 
+@Component
 @Path("/screen")
 public class ScreenResource {
+    private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final GlobalPermissionManager globalPermissionManager;
+
+    @Autowired
+    public ScreenResource(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext, @ComponentImport GlobalPermissionManager globalPermissionManager) {
+        this.globalPermissionManager = globalPermissionManager;
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+    }
+
+    private boolean canAccess() {
+        if (this.jiraAuthenticationContext.isLoggedInUser()) {
+            return this.globalPermissionManager.hasPermission(GlobalPermissionKey.ADMINISTER, this.jiraAuthenticationContext.getLoggedInUser());
+        }
+        return false;
+    }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
+        if (!this.canAccess()) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
         FieldScreenSchemeManager fieldScreenSchemeManager = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
 
