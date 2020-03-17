@@ -6,6 +6,8 @@ import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import com.atlassian.jira.scheme.Scheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
@@ -17,6 +19,7 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 @Path("/workflowscheme")
 public class WorkflowSchemeResource {
     private Auth auth;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public WorkflowSchemeResource(Auth auth) {
@@ -31,18 +34,17 @@ public class WorkflowSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info("Cleaner - REST - Delete - WorkflowScheme - / - Started");
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
 
         List<Scheme> schemeObjects = schemeManager.getSchemeObjects();
 
         schemeObjects.forEach(scheme -> {
-            try {
-                AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(scheme.getId());
+            AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(scheme.getId());
+            if(wf != null) {
                 if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
                     schemeManager.deleteWorkflowScheme(wf);
                 }
-            } catch (Exception c) {
-                // noop
             }
         });
 
@@ -57,6 +59,7 @@ public class WorkflowSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info(String.format("Cleaner - REST - Delete - WorkflowScheme - /%d - Started", id));
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
         AssignableWorkflowScheme workflowScheme = schemeManager.getWorkflowSchemeObj(id);
 
