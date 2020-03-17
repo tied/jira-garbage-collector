@@ -31,7 +31,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.wink:wink-common:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-jaxrs_1.1_spec:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.sun.xml.bind:jaxb-impl:2.2.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.8.5" level="project" />
@@ -41,5 +41,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework:spring-context:4.3.26.RELEASE" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework:spring-aop:4.3.26.RELEASE" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework:spring-expression:4.3.26.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.9" level="project" />
   </component>
 </module>

@@ -9,12 +9,15 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Path("/workflow")
 public class WorkflowResource {
     private Auth auth;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public WorkflowResource(Auth auth) {
@@ -29,6 +32,7 @@ public class WorkflowResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info("Cleaner - REST - Delete - Workflow - / - Started");
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
 
@@ -52,6 +56,7 @@ public class WorkflowResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info(String.format("Cleaner - REST - Delete - Workflow - /%s - Started", name));
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         JiraWorkflow workflow = workflowManager.getWorkflow(name);
         if(workflow == null) {

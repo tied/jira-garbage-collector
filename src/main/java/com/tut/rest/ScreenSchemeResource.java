@@ -11,11 +11,14 @@ import com.atlassian.jira.issue.fields.screen.FieldScreenScheme;
 import com.atlassian.jira.issue.fields.screen.FieldScreenSchemeManager;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/screenscheme")
 public class ScreenSchemeResource {
     private Auth auth;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public ScreenSchemeResource(Auth auth) {
@@ -30,14 +33,14 @@ public class ScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info("Cleaner - REST - Delete - ScreenScheme - / - Started");
         FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
         IssueTypeScreenSchemeManager itssm = ComponentAccessor.getIssueTypeScreenSchemeManager();
 
         fssm.getFieldScreenSchemes().forEach(fss -> {
-            try {
-                Collection itssCollection = itssm.getIssueTypeScreenSchemes(fss);
-                AtomicBoolean allDeleted = new AtomicBoolean(true);
-
+            Collection itssCollection = itssm.getIssueTypeScreenSchemes(fss);
+            AtomicBoolean allDeleted = new AtomicBoolean(true);
+            if(itssCollection != null) {
                 itssCollection.forEach(itss -> {
                     if(itss != null) {
                         allDeleted.set(false);
@@ -51,8 +54,6 @@ public class ScreenSchemeResource {
                     // remove field screen scheme
                     fssm.removeFieldScreenScheme(fss);
                 }
-            } catch(Exception e) {
-                //noop
             }
         });
 
@@ -67,6 +68,7 @@ public class ScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info(String.format("Cleaner - REST - Delete - ScreenScheme - /%d - Started", id));
         FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
         FieldScreenScheme screen = fssm.getFieldScreenScheme(id);
 

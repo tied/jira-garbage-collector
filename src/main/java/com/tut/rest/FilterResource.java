@@ -1,6 +1,9 @@
 package com.tut.rest;
 
+
 import javax.ws.rs.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
@@ -13,6 +16,7 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 @Path("/filter")
 public class FilterResource {
     private Auth auth;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public FilterResource(Auth auth) {
@@ -27,6 +31,7 @@ public class FilterResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info(String.format("Cleaner - REST - Delete - Filter - /%d - Started", id));
         SearchRequestManager searchRequestManager = ComponentAccessor.getComponent(SearchRequestManager.class);
         SearchRequest searchRequest = searchRequestManager.getSearchRequestById(id);
 

@@ -5,6 +5,8 @@ import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.atlassian.jira.component.ComponentAccessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
@@ -13,6 +15,7 @@ import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeMan
 @Path("/issuetypescreenscheme")
 public class IssueTypeScreenSchemeResource {
     private Auth auth;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public IssueTypeScreenSchemeResource(Auth auth) {
@@ -27,6 +30,7 @@ public class IssueTypeScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info("Cleaner - REST - Delete - IssueTypeScreenScheme - / - Started");
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme defaultScheme = schemeManager.getDefaultScheme();
 
@@ -55,6 +59,7 @@ public class IssueTypeScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        this.logger.info(String.format("Cleaner - REST - Delete - IssueTypeScreenScheme - /%d - Started", id));
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme screen = schemeManager.getIssueTypeScreenScheme(id);
 
