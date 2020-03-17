@@ -1,11 +1,11 @@
 package com.tut.rest.utils;
 
+import org.springframework.stereotype.Component;
 import com.atlassian.jira.permission.GlobalPermissionKey;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 
 @Component
 public class Auth {

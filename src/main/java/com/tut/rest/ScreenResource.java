@@ -1,21 +1,16 @@
 package com.tut.rest;
 
-import com.atlassian.jira.issue.fields.screen.*;
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.permission.GlobalPermissionKey;
-import com.atlassian.jira.security.GlobalPermissionManager;
-import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.workflow.WorkflowActionsBean;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.tut.rest.utils.Auth;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import javax.ws.rs.*;
 import java.util.ArrayList;
+import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.atlassian.jira.issue.fields.screen.*;
+import org.springframework.stereotype.Component;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.workflow.WorkflowActionsBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Component
 @Path("/screen")

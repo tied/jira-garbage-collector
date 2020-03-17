@@ -1,19 +1,17 @@
 package com.tut.rest;
 
+import javax.ws.rs.*;
+import java.util.Collection;
+import com.tut.rest.utils.Auth;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.concurrent.atomic.AtomicBoolean;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.screen.FieldScreenScheme;
 import com.atlassian.jira.issue.fields.screen.FieldScreenSchemeManager;
-import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.tut.rest.utils.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Path("/screenscheme")
 public class ScreenSchemeResource {

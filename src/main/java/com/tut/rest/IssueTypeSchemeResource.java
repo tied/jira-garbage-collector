@@ -1,16 +1,15 @@
 package com.tut.rest;
 
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
-import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.tut.rest.utils.Auth;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.ws.rs.*;
+import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.concurrent.atomic.AtomicReference;
+import com.atlassian.jira.component.ComponentAccessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 
 @Path("/issuetypescheme")
 public class IssueTypeSchemeResource {

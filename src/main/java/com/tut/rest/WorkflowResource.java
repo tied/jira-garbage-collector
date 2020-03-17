@@ -1,17 +1,16 @@
 package com.tut.rest;
 
-import com.atlassian.jira.component.ComponentAccessor;
+import javax.ws.rs.*;
+import java.util.Collection;
+import com.tut.rest.utils.Auth;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.tut.rest.utils.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Path("/workflow")
 public class WorkflowResource {
