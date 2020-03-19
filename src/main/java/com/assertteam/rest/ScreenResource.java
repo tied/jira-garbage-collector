@@ -1,8 +1,10 @@
-package com.tut.rest;
+package com.assertteam.rest;
 
 import javax.ws.rs.*;
 import java.util.ArrayList;
-import com.tut.rest.utils.Auth;
+
+import com.assertteam.rest.utils.Auth;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.atlassian.jira.issue.fields.screen.*;

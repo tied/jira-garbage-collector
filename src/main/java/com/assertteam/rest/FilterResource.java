@@ -1,9 +1,11 @@
-package com.tut.rest;
+package com.assertteam.rest;
 
 import javax.ws.rs.*;
+
+import com.assertteam.rest.utils.Auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.tut.rest.utils.Auth;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import com.atlassian.jira.issue.search.SearchRequest;
