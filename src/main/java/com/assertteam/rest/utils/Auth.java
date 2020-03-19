@@ -8,7 +8,6 @@ import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.upm.api.license.PluginLicenseManager;
 
 @Component
 public class Auth {
@@ -17,7 +16,7 @@ public class Auth {
     private Logger logger = LoggerFactory.getLogger(Auth.class);
 
     @Autowired
-    public Auth(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext, @ComponentImport GlobalPermissionManager globalPermissionManager, @ComponentImport PluginLicenseManager pluginLicenseManager) {
+    public Auth(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext, @ComponentImport GlobalPermissionManager globalPermissionManager) {
         this.globalPermissionManager = globalPermissionManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
