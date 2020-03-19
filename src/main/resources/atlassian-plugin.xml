@@ -18,8 +18,8 @@
     <resource type="download" name="images/" location="/images"/>  
     <context>rest</context> 
   </web-resource>
-  <rest key="cleaner-resource" path="/cleaner" version="1.0">
-    <description>Jira Cleaner Rest Resource Plugin</description>
+  <rest key="gc-resource" path="/gc" version="1.0">
+    <description>Jira Garbage Collector Resource Plugin</description>
   </rest>
 
 

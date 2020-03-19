@@ -1,6 +1,7 @@
 package com.tut.rest;
 
 import javax.ws.rs.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.Response;
@@ -30,7 +31,8 @@ public class WorkflowResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info("Cleaner - REST - Delete - Workflow - / - Started");
+        this.logger.info("GC - REST - Delete - Workflow - / - Started");
+        ArrayList<DeleteModel> deleted = new ArrayList<>();
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
 
@@ -38,12 +40,14 @@ public class WorkflowResource {
             if(!jiraWorkflow.isSystemWorkflow() && !jiraWorkflow.isDefault()) {
                 Collection<org.ofbiz.core.entity.GenericValue> schemes = schemeManager.getSchemesForWorkflow(jiraWorkflow);
                 if(schemes.size() == 0) {
+                    deleted.add(new DeleteModel("Workflow", String.format("Name: '%s' deleted", jiraWorkflow.getName())));
                     workflowManager.deleteWorkflow(jiraWorkflow);
                 }
             }
         });
 
-        return Response.ok(new DeleteModel("id", "testMsg")).build();
+        this.logger.info("GC - REST - Delete - Workflow - / - Deleted");
+        return Response.ok(deleted).build();
     }
 
     @DELETE
@@ -53,14 +57,17 @@ public class WorkflowResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info(String.format("Cleaner - REST - Delete - Workflow - /%s - Started", name));
+        this.logger.info(String.format("GC - REST - Delete - Workflow - /%s - Started", name));
         WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
         JiraWorkflow workflow = workflowManager.getWorkflow(name);
+
         if(workflow == null) {
             return Response.status(404).build();
         }
+
         workflowManager.deleteWorkflow(workflow);
 
+        this.logger.info(String.format("GC - REST - Delete - Workflow - /%s - Deleted", name));
         return Response.ok(new DeleteModel("Workflow", String.format("Name: '%s' deleted", workflow.getName()))).build();
     }
 }

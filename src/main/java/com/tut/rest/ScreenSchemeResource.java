@@ -1,6 +1,7 @@
 package com.tut.rest;
 
 import javax.ws.rs.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import com.tut.rest.utils.Auth;
 import javax.ws.rs.core.MediaType;
@@ -31,7 +32,8 @@ public class ScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info("Cleaner - REST - Delete - ScreenScheme - / - Started");
+        this.logger.info("GC - REST - Delete - ScreenScheme - / - Started");
+        ArrayList<DeleteModel> deleted = new ArrayList<>();
         FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
         IssueTypeScreenSchemeManager itssm = ComponentAccessor.getIssueTypeScreenSchemeManager();
 
@@ -47,6 +49,7 @@ public class ScreenSchemeResource {
                 });
 
                 if(itssCollection.size() == 0 || allDeleted.get()) {
+                    deleted.add(new DeleteModel("ScreenScheme", String.format("ID: '%d', Name: '%s' deleted", fss.getId(), fss.getName())));
                     // remove association to any screens
                     fssm.removeFieldSchemeItems(fss);
                     // remove field screen scheme
@@ -55,7 +58,8 @@ public class ScreenSchemeResource {
             }
         });
 
-        return Response.ok(new DeleteModel("id", "testMsg")).build();
+        this.logger.info("GC - REST - Delete - ScreenScheme - / - Deleted");
+        return Response.ok(deleted).build();
     }
 
     @DELETE
@@ -65,7 +69,7 @@ public class ScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info(String.format("Cleaner - REST - Delete - ScreenScheme - /%d - Started", id));
+        this.logger.info(String.format("GC - REST - Delete - ScreenScheme - /%d - Started", id));
         FieldScreenSchemeManager fssm = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
         FieldScreenScheme screen = fssm.getFieldScreenScheme(id);
 
@@ -75,6 +79,8 @@ public class ScreenSchemeResource {
 
         fssm.removeFieldSchemeItems(screen);
         fssm.removeFieldScreenScheme(screen);
+
+        this.logger.info(String.format("GC - REST - Delete - ScreenScheme - /%d - Deleted", id));
         return Response.ok(new DeleteModel("ScreenScheme", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName()))).build();
     }
 }

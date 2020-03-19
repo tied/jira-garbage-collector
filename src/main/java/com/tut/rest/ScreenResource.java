@@ -31,7 +31,8 @@ public class ScreenResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info("Cleaner - REST - Delete - Screen - / - Started");
+        this.logger.info("GC - REST - Delete - Screen - / - Started");
+        ArrayList<DeleteModel> deleted = new ArrayList<>();
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
         FieldScreenSchemeManager fieldScreenSchemeManager = ComponentAccessor.getComponent(FieldScreenSchemeManager.class);
 
@@ -68,10 +69,13 @@ public class ScreenResource {
         allScreensIds.removeAll(screenIdsWithScheme);
         allScreensIds.removeAll(screenIdsWithWorkflowAction);
         allScreensIds.forEach(screen -> {
+            FieldScreen removedScreen = fieldScreenManager.getFieldScreen(screen);
+            deleted.add(new DeleteModel("Screen", String.format("ID: '%d', Name: '%s' deleted", removedScreen.getId(), removedScreen.getName())));
             fieldScreenManager.removeFieldScreen(screen);
         });
 
-        return Response.ok(new DeleteModel("id", "testMsg")).build();
+        this.logger.info("GC - REST - Delete - Screen - / - Deleted");
+        return Response.ok(deleted).build();
     }
 
     @DELETE
@@ -81,7 +85,7 @@ public class ScreenResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info(String.format("Cleaner - REST - Delete - ScreenScheme - /%d - Started", id));
+        this.logger.info(String.format("GC - REST - Delete - ScreenScheme - /%d - Started", id));
         FieldScreenManager fieldScreenManager = ComponentAccessor.getFieldScreenManager();
         FieldScreen screen = fieldScreenManager.getFieldScreen(id);
 
@@ -90,6 +94,7 @@ public class ScreenResource {
         }
 
         fieldScreenManager.removeFieldScreen(screen.getId());
+        this.logger.info(String.format("GC - REST - Delete - ScreenScheme - /%d - Deleted", id));
         return Response.ok(new DeleteModel("Screen", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName()))).build();
     }
 }

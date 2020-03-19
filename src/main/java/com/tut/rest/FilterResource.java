@@ -1,6 +1,5 @@
 package com.tut.rest;
 
-
 import javax.ws.rs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ public class FilterResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info(String.format("Cleaner - REST - Delete - Filter - /%d - Started", id));
+        this.logger.info(String.format("GC - REST - Delete - Filter - /%d - Started", id));
         SearchRequestManager searchRequestManager = ComponentAccessor.getComponent(SearchRequestManager.class);
         SearchRequest searchRequest = searchRequestManager.getSearchRequestById(id);
 
@@ -38,6 +37,7 @@ public class FilterResource {
         }
 
         searchRequestManager.delete(id);
+        this.logger.info(String.format("GC - REST - Delete - Filter - /%d - Deleted", id));
         return Response.ok(new DeleteModel("Filter", String.format("ID: '%d', Name: '%s' deleted", searchRequest.getId(), searchRequest.getName()))).build();
     }
 }

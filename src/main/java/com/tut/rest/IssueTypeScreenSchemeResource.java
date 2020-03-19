@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 
+import java.util.ArrayList;
+
 @Path("/issuetypescreenscheme")
 public class IssueTypeScreenSchemeResource {
     private Auth auth;
@@ -28,7 +30,8 @@ public class IssueTypeScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info("Cleaner - REST - Delete - IssueTypeScreenScheme - / - Started");
+        this.logger.info("GC - REST - Delete - IssueTypeScreenScheme - / - Started");
+        ArrayList<DeleteModel> deleted = new ArrayList<>();
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme defaultScheme = schemeManager.getDefaultScheme();
 
@@ -40,13 +43,15 @@ public class IssueTypeScreenSchemeResource {
 
             if(screen.getProjects().size() == 0) {
                 // no associated projects, lets remove it
+                deleted.add(new DeleteModel("IssueTypeScreenScheme", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName())));
                 schemeManager.removeIssueTypeSchemeEntities(screen);
                 schemeManager.removeIssueTypeScreenScheme(screen);
                 screen.remove();
             }
         });
 
-        return Response.ok(new DeleteModel("id", "testMsg")).build();
+        this.logger.info("GC - REST - Delete - IssueTypeScreenScheme - / - Deleted");
+        return Response.ok(deleted).build();
     }
 
     @DELETE
@@ -56,7 +61,7 @@ public class IssueTypeScreenSchemeResource {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info(String.format("Cleaner - REST - Delete - IssueTypeScreenScheme - /%d - Started", id));
+        this.logger.info(String.format("GC - REST - Delete - IssueTypeScreenScheme - /%d - Started", id));
         IssueTypeScreenSchemeManager schemeManager = ComponentAccessor.getIssueTypeScreenSchemeManager();
         IssueTypeScreenScheme screen = schemeManager.getIssueTypeScreenScheme(id);
 
@@ -66,6 +71,7 @@ public class IssueTypeScreenSchemeResource {
         schemeManager.removeIssueTypeSchemeEntities(screen);
         schemeManager.removeIssueTypeScreenScheme(screen);
         screen.remove();
+        this.logger.info(String.format("GC - REST - Delete - IssueTypeScreenScheme - /%d - Deleted", id));
         return Response.ok(new DeleteModel("IssueTypeScreenScheme", String.format("ID: '%d', Name: '%s' deleted", screen.getId(), screen.getName()))).build();
     }
 }
