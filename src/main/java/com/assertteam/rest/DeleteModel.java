@@ -1,4 +1,4 @@
-package com.tut.rest;
+package com.assertteam.rest;
 
 import javax.xml.bind.annotation.*;
 

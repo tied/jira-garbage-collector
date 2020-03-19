@@ -1,8 +1,11 @@
-package com.tut.rest;
+package com.assertteam.rest;
 
 import javax.ws.rs.*;
+import java.util.ArrayList;
 import java.util.List;
-import com.tut.rest.utils.Auth;
+
+import com.assertteam.rest.utils.Auth;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import com.atlassian.jira.scheme.Scheme;
@@ -13,7 +16,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Component
 @Path("/workflowscheme")
@@ -27,14 +29,14 @@ public class WorkflowSchemeResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info("Cleaner - REST - Delete - WorkflowScheme - / - Started");
+        this.logger.info("GC - REST - Delete - WorkflowScheme - / - Started");
+        ArrayList<DeleteModel> deleted = new ArrayList<>();
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
 
         List<Scheme> schemeObjects = schemeManager.getSchemeObjects();
@@ -43,31 +45,33 @@ public class WorkflowSchemeResource {
             AssignableWorkflowScheme wf = schemeManager.getWorkflowSchemeObj(scheme.getId());
             if(wf != null) {
                 if(schemeManager.getProjectsUsing(wf).size() == 0 && !wf.isDefault()) {
+                    deleted.add(new DeleteModel("WorkflowScheme", String.format("ID: '%d', Name: '%s' deleted", wf.getId(), wf.getName())));
                     schemeManager.deleteWorkflowScheme(wf);
                 }
             }
         });
 
-        return Response.ok(new DeleteModel("id", "testMsg")).build();
+        this.logger.info("GC - REST - Delete - WorkflowScheme - / - Deleted");
+        return Response.ok(deleted).build();
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") int id) {
         if (!auth.canAccess()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        this.logger.info(String.format("Cleaner - REST - Delete - WorkflowScheme - /%d - Started", id));
+        this.logger.info(String.format("GC - REST - Delete - WorkflowScheme - /%d - Started", id));
         WorkflowSchemeManager schemeManager = ComponentAccessor.getWorkflowSchemeManager();
         AssignableWorkflowScheme workflowScheme = schemeManager.getWorkflowSchemeObj(id);
 
         if(workflowScheme == null) {
             return Response.status(404).build();
         }
-
         schemeManager.deleteWorkflowScheme(workflowScheme);
+
+        this.logger.info(String.format("GC - REST - Delete - WorkflowScheme - /%d - Deleted", id));
         return Response.ok(new DeleteModel("WorkflowScheme", String.format("ID: '%d', Name: '%s' deleted", workflowScheme.getId(), workflowScheme.getName()))).build();
     }
 }

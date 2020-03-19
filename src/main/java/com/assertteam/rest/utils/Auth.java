@@ -1,4 +1,4 @@
-package com.tut.rest.utils;
+package com.assertteam.rest.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
