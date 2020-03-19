@@ -2,15 +2,15 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.tut</groupId>
+    <groupId>com.assertteam</groupId>
     <artifactId>Rest</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <organization>
-        <name>Example Company</name>
-        <url>http://www.example.com/</url>
+        <name>assertteam</name>
+        <url>---</url>
     </organization>
-    <name>Rest</name>
-    <description>This is the com.tut:Rest plugin for Atlassian JIRA.</description>
+    <name>Jira Garbage Collector API</name>
+    <description>Jira Garbage Collector Resource Plugin.</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>
         <dependency>
@@ -57,6 +57,18 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>licensing-api</artifactId>
+            <version>2.21.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-api</artifactId>
+            <version>2.21</version>
             <scope>provided</scope>
         </dependency>
         <!-- WIRED TEST RUNNER DEPENDENCIES -->
