@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.workflow.WorkflowActionsBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Component
 @Path("/screen")
@@ -76,7 +75,6 @@ public class ScreenResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {

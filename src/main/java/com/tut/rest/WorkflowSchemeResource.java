@@ -13,7 +13,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Component
 @Path("/workflowscheme")
@@ -27,7 +26,6 @@ public class WorkflowSchemeResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
@@ -52,7 +50,6 @@ public class WorkflowSchemeResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") int id) {

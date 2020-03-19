@@ -8,7 +8,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenSchemeManager;
 
@@ -23,7 +22,6 @@ public class IssueTypeScreenSchemeResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
@@ -52,7 +50,6 @@ public class IssueTypeScreenSchemeResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{id}")
     public Response gcForKey(@PathParam("id") long id) {

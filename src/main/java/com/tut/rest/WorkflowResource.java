@@ -12,7 +12,6 @@ import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Path("/workflow")
 public class WorkflowResource {
@@ -25,7 +24,6 @@ public class WorkflowResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/")
     public Response gcNotDefault() {
@@ -49,7 +47,6 @@ public class WorkflowResource {
     }
 
     @DELETE
-    @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/{name}")
     public Response gcForKey(@PathParam("name") String name) {
